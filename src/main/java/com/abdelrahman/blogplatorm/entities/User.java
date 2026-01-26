@@ -1,16 +1,21 @@
 package com.abdelrahman.blogplatorm.entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.abdelrahman.blogplatorm.enums.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,12 +24,14 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "Users")
+@Builder
 @NoArgsConstructor@AllArgsConstructor@Setter@Getter
 public class User {
 
@@ -32,21 +39,25 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(nullable = false)
 	private String name;
 	
 	@Email
 	@NotBlank
-	@Column(nullable = false)
+	@Column(nullable = false,unique = true)
 	private String email;
 	@NotBlank
 	@Column(nullable = false)
 	private String password;
 	
+	@Enumerated(EnumType.STRING)
+	private Role role;
+	
 	@CreatedDate
 	private LocalDateTime createdAt;
 	
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
 	@JsonBackReference
-	private List<Post> posts;
+	private List<Post> posts = new ArrayList<>();
 	
 }

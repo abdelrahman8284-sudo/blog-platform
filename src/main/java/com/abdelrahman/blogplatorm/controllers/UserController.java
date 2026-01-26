@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.abdelrahman.blogplatorm.entities.User;
+import com.abdelrahman.blogplatorm.dtos.requests.UserRequestDto;
 import com.abdelrahman.blogplatorm.services.UserService;
 
 @RestController
@@ -22,12 +22,12 @@ public class UserController {
 	private UserService userService;
 	
 	@PostMapping
-	public ResponseEntity<?> createAccount(@RequestBody User user){
-		return ResponseEntity.ok(userService.insert(user));
+	public ResponseEntity<?> createAccount(@RequestBody UserRequestDto dto){
+		return ResponseEntity.ok(userService.insert(dto));
 	}
 	@PutMapping
-	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody User user){
-		return ResponseEntity.ok(userService.update(id,user));
+	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody UserRequestDto dto){
+		return ResponseEntity.ok(userService.update(id,dto));
 	}
 	@GetMapping("/id/{id}")
 	public ResponseEntity<?> findById(@PathVariable Long id){

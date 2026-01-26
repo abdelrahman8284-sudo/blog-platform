@@ -2,38 +2,50 @@ package com.abdelrahman.blogplatorm.services;
 
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.abdelrahman.blogplatorm.dtos.requests.CategoryRequestDto;
+import com.abdelrahman.blogplatorm.dtos.responses.CategoryResponseDto;
 import com.abdelrahman.blogplatorm.entities.Category;
+import com.abdelrahman.blogplatorm.mappers.CategoryMapper;
 import com.abdelrahman.blogplatorm.repositories.CategoryRepo;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
-	@Autowired
-	private CategoryRepo categoryRepo;
 	
-	public Category insert(Category category) {
-		return categoryRepo.save(category);
+	private final CategoryRepo catRepo;
+	
+	private final CategoryMapper mapper;
+	
+	public CategoryResponseDto insert(CategoryRequestDto dto) {
+		return mapper.toDto(catRepo.save(mapper.toEntity(dto)));
 	}
 
-	public Category update(Long id,Category category) {
-		if(categoryRepo.findById(id).isEmpty()) {
+	public CategoryResponseDto update(Long id,CategoryRequestDto dto) {
+		if(catRepo.findById(id).isEmpty()) {
 			throw new RuntimeException("Category Not found");
 		}
-		return categoryRepo.save(category);
+		return mapper.toDto(catRepo.save(mapper.toEntity(dto)));
 	}
 	
-	public Category findByName(String categoryName) {
-		return categoryRepo.findByName(categoryName).orElseThrow(()->new RuntimeException("Category Not found"));
+	public CategoryResponseDto findByName(String categoryName) {
+		return mapper.toDto(catRepo.findByName(categoryName).orElseThrow(()->new RuntimeException("Category Not found")));
 	}
 	
-	public List<Category> findAll(){
-		return categoryRepo.findAll();
+	public List<CategoryResponseDto> findAll(){
+		return mapper.toListDto(catRepo.findAll());
 	}
 
-	public Category findById(Long id) {	
-		return categoryRepo.findById(id).orElseThrow(()->new RuntimeException("Category Not Found"));
+	public CategoryResponseDto findById(Long id) {	
+		return mapper.toDto(catRepo.findById(id).orElseThrow(()->new RuntimeException("Category Not Found")));
 	}
+	
+	public Category getById(Long id) {
+	    return catRepo.findById(id)
+	        .orElseThrow(() -> new RuntimeException("Category Not Found"));
+	}
+
 }

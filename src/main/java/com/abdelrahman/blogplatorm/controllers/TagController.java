@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.abdelrahman.blogplatorm.entities.Tag;
+import com.abdelrahman.blogplatorm.dtos.requests.TagRequestDto;
 import com.abdelrahman.blogplatorm.services.TagService;
 @RestController
 @RequestMapping("/tag")
@@ -20,12 +20,12 @@ public class TagController {
 	private TagService tagService;
 	
 	@PostMapping
-	public ResponseEntity<?> createTag(@RequestBody Tag Tag){
-		return ResponseEntity.ok(tagService.insert(Tag));
+	public ResponseEntity<?> createTag(@RequestBody TagRequestDto tag){
+		return ResponseEntity.ok(tagService.insert(tag));
 	}
 	@PutMapping
-	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody Tag Tag){
-		return ResponseEntity.ok(tagService.update(id,Tag));
+	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody TagRequestDto tag){
+		return ResponseEntity.ok(tagService.update(id,tag));
 	}
 	@GetMapping("/id/{id}")
 	public ResponseEntity<?> findById(@PathVariable Long id){

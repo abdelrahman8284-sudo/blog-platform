@@ -2,39 +2,60 @@ package com.abdelrahman.blogplatorm.services;
 
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.abdelrahman.blogplatorm.dtos.requests.TagRequestDto;
+import com.abdelrahman.blogplatorm.dtos.responses.TagResponseDto;
 import com.abdelrahman.blogplatorm.entities.Tag;
+import com.abdelrahman.blogplatorm.mappers.TagMapper;
 import com.abdelrahman.blogplatorm.repositories.TagRepo;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class TagService {
 
-	@Autowired
-	private TagRepo tagRepo;
+	private final TagRepo tagRepo;
 	
-	public Tag insert(Tag tag) {
-		return tagRepo.save(tag);
+	private final TagMapper mapper;
+	
+	public TagResponseDto insert(TagRequestDto dto) {
+		return mapper.toDto(tagRepo.save(mapper.toEntity(dto)));
 	}
 
-	public Tag update(Long id,Tag tag) {
+	public TagResponseDto update(Long id,TagRequestDto dto) {
 		if(tagRepo.findById(id).isEmpty()) {
 			throw new RuntimeException("Tag Not found");
 		}
-		return tagRepo.save(tag);
+		return mapper.toDto(tagRepo.save(mapper.toEntity(dto)));
 	}
 	
-	public Tag findByName(String tagName) {
-		return tagRepo.findByName(tagName).orElseThrow(()->new RuntimeException("Tag Not found"));
+	public TagResponseDto findByName(String tagName) {
+		return mapper.toDto(tagRepo.findByName(tagName).orElseThrow(()->new RuntimeException("Tag Not found")));
 	}
 	
-	public List<Tag> findAll(){
-		return tagRepo.findAll();
+	public List<TagResponseDto> findAll(){
+		return mapper.toListDto(tagRepo.findAll());
 	}
 
-	public Tag findById(Long id) {	
-		return tagRepo.findById(id).orElseThrow(()->new RuntimeException("Tag Not Found"));
+	public TagResponseDto findById(Long id) {	
+		return mapper.toDto(tagRepo.findById(id).orElseThrow(()->new RuntimeException("Tag Not Found")));
+	}
+
+	public List<TagResponseDto> findAllById(List<Long> tagsIds) {
+		return mapper.toListDto(tagRepo.findAllById(tagsIds));
+	}
+	
+	public List<TagResponseDto> findAllByName(List<String> tagsNames){
+		return mapper.toListDto(tagRepo.findAllByName(tagsNames));
+	}
+	
+	public List<Tag> getByNames(List<String> names) {
+	    return tagRepo.findAllByName(names);
+	}
+	
+	public boolean isExist(String name) {
+		return tagRepo.existsByName(name);
 	}
 }

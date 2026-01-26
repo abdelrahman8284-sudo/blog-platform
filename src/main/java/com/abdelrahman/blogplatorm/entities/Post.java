@@ -8,9 +8,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.abdelrahman.blogplatorm.dtos.responses.UserResponseDto;
 import com.abdelrahman.blogplatorm.enums.Status;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -26,12 +28,14 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name="posts")
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor@AllArgsConstructor@Setter@Getter
 public class Post {
@@ -39,7 +43,7 @@ public class Post {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+	@Column(nullable = false)
 	private String title;
 	
 	@Lob
@@ -47,10 +51,12 @@ public class Post {
 	
 	private Integer readingTime;
 	
-	@CreatedDate
-	private LocalDateTime createdAt;
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Status status;
+	
+	@CreatedDate
+	private LocalDateTime createdAt;
 	
 	@LastModifiedDate
 	private LocalDateTime updatedAt;

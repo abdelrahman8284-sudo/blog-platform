@@ -2,43 +2,54 @@ package com.abdelrahman.blogplatorm.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.abdelrahman.blogplatorm.dtos.requests.UserRequestDto;
+import com.abdelrahman.blogplatorm.dtos.responses.UserResponseDto;
 import com.abdelrahman.blogplatorm.entities.User;
+import com.abdelrahman.blogplatorm.mappers.UserMapper;
 import com.abdelrahman.blogplatorm.repositories.UserRepo;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-	@Autowired
-	private UserRepo userRepo;
 	
-	public User insert(User user) {
-		return userRepo.save(user);
+	private final UserRepo userRepo;
+	private final UserMapper mapper;
+	
+	public UserResponseDto insert(UserRequestDto dto) {
+		User user = mapper.toUserEntity(dto);
+		return mapper.toUserDto(userRepo.save(user));
 	}
 	
-	public User update(Long id,User user) {
+	public UserResponseDto update(Long id,UserRequestDto dto) {
 		User currentUser = userRepo.findById(id).orElseThrow(()->new RuntimeException("User Not found"));
+		User user = mapper.toUserEntity(dto);
 		currentUser.setName(user.getName());
 		currentUser.setEmail(user.getEmail());
 		currentUser.setPassword(user.getPassword());
-		return userRepo.save(user);
+		return mapper.toUserDto(userRepo.save(currentUser));
 	}
 	
-	public List<User> findAll(){
-		return userRepo.findAll();
+	public List<UserResponseDto> findAll(){
+		
+		return mapper.toList(userRepo.findAll());
 	}
 	
-	public User findById(Long id) {
-		return userRepo.findById(id).orElseThrow(()->new RuntimeException("User Not Found"));
+	public UserResponseDto findById(Long id) {
+		return mapper.toUserDto(userRepo.findById(id).orElseThrow(()->new RuntimeException("User Not Found")));
 	}
 	
-	public User findByEmail(String email) {
-		return userRepo.findByEmail(email).orElseThrow(()->new RuntimeException("User not Found"));
+	public UserResponseDto findByEmail(String email) {
+		return mapper.toUserDto(userRepo.findByEmail(email).orElseThrow(()->new RuntimeException("User not Found")));
 	}
 	
 	public void delete(Long id) {
+		if(!userRepo.existsById(id))
+			throw new RuntimeException("User Not Found");
 		userRepo.deleteById(id);
 	}
 }

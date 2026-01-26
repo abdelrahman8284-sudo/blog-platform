@@ -1,42 +1,72 @@
 package com.abdelrahman.blogplatorm.services;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.abdelrahman.blogplatorm.dtos.requests.PostRequestDto;
+import com.abdelrahman.blogplatorm.dtos.requests.TagRequestDto;
+import com.abdelrahman.blogplatorm.dtos.responses.PostResponseDto;
+import com.abdelrahman.blogplatorm.entities.Category;
 import com.abdelrahman.blogplatorm.entities.Post;
+import com.abdelrahman.blogplatorm.entities.Tag;
+import com.abdelrahman.blogplatorm.entities.User;
+import com.abdelrahman.blogplatorm.mappers.PostMapper;
 import com.abdelrahman.blogplatorm.repositories.PostRepo;
+import com.abdelrahman.blogplatorm.repositories.UserRepo;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
-	@Autowired
-	private PostRepo postRepo;
 
-	public Post insert(Post post) {
-		return postRepo.save(post);
-	}
+	private final PostRepo postRepo;
+	private final PostMapper mapper;
+	private final TagService tagService;
+	private final UserRepo userRepo;	
+	private final CategoryService catService;
 
-	public Post update(Long id, Post post) {
-		Optional<Post> currentPost = postRepo.findById(id);
-		if(currentPost.isEmpty()) {
-			throw new RuntimeException("Post Not found");
+	public PostResponseDto insert(PostRequestDto requestDto) {
+		List<String> tagsNames= requestDto.getTags();
+		for (String tagName : tagsNames) {
+			if(!tagService.isExist(tagName)) {
+				tagService.insert(new TagRequestDto(tagName));
+			}
 		}
-		return postRepo.save(post);
+		Set<Tag> tags = new HashSet<>(tagService.getByNames(tagsNames));
+		User author =userRepo.findById(requestDto.getUserId()).get();
+		Category category = catService.getById(requestDto.getCategoryId());		
+		Post post = mapper.toPost(requestDto);
+		post.setCategory(category);
+		post.setUser(author);
+		post.setTags(tags);
+		return mapper.toPostDto(postRepo.save(post));
 	}
 
-	public List<Post> findAll() {
-		return postRepo.findAll();
+//	public Post update(Long id, Post post) {
+//		Post currentPost = postRepo.findById(id).orElseThrow(()->new RuntimeException("Post Not Found"));
+//		currentPost.setContent(post.getContent());
+//		currentPost.setCategory(post.getCategory());
+//		currentPost.setCreatedAt(post.getCreatedAt());
+//		currentPost.setReadingTime(post.getReadingTime());
+//		currentPost.setStatus(post.getSta);
+//		return postRepo.save(post);
+//	}
+
+	public List<PostResponseDto> findAll() {
+		
+		return mapper.toListDto(postRepo.findAll());
 	}
 
-	public Post findById(Long id) {
-		return postRepo.findById(id).orElseThrow(() -> new RuntimeException("Post Not Found"));
+	public PostResponseDto findById(Long id) {
+		return mapper.toPostDto(postRepo.findById(id).orElseThrow(() -> new RuntimeException("Post Not Found")));	
 	}
 	
-	public List<Post> findByTitle(String title) {
-		
-		return postRepo.findByTitle(title);
+	public List<PostResponseDto> findByTitle(String title) {
+		return 	mapper.toListDto(postRepo.findByTitle(title));
 	}
 
 	public String delete(Long id) {

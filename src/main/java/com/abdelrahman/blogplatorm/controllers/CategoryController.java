@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abdelrahman.blogplatorm.dtos.requests.CategoryRequestDto;
 import com.abdelrahman.blogplatorm.entities.Category;
 import com.abdelrahman.blogplatorm.services.CategoryService;
 @RestController
@@ -20,11 +21,11 @@ public class CategoryController {
 	private CategoryService categoryService;
 	
 	@PostMapping
-	public ResponseEntity<?> createCategory(@RequestBody Category category){
+	public ResponseEntity<?> createCategory(@RequestBody CategoryRequestDto category){
 		return ResponseEntity.ok(categoryService.insert(category));
 	}
 	@PutMapping
-	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody Category category){
+	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody CategoryRequestDto category){
 		return ResponseEntity.ok(categoryService.update(id,category));
 	}
 	@GetMapping("/id/{id}")

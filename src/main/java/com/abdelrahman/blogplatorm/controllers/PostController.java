@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abdelrahman.blogplatorm.dtos.requests.PostRequestDto;
 import com.abdelrahman.blogplatorm.entities.Post;
 import com.abdelrahman.blogplatorm.services.PostService;
 
@@ -22,13 +23,13 @@ public class PostController {
 	private PostService postService;
 	
 	@PostMapping
-	public ResponseEntity<?> addPost(@RequestBody Post post){
-		return ResponseEntity.ok(postService.insert(post));
+	public ResponseEntity<?> addPost(@RequestBody PostRequestDto dto){
+		return ResponseEntity.ok(postService.insert(dto));
 	}
-	@PutMapping
-	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody Post post){
-		return ResponseEntity.ok(postService.update(id,post));
-	}
+//	@PutMapping
+//	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody Post post){
+//		return ResponseEntity.ok(postService.update(id,post));
+//	}
 	@GetMapping("/id/{id}")
 	public ResponseEntity<?> findById(@PathVariable Long id){
 		return ResponseEntity.ok(postService.findById(id));
