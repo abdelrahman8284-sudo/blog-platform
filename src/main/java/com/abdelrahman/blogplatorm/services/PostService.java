@@ -13,6 +13,7 @@ import com.abdelrahman.blogplatorm.entities.Category;
 import com.abdelrahman.blogplatorm.entities.Post;
 import com.abdelrahman.blogplatorm.entities.Tag;
 import com.abdelrahman.blogplatorm.entities.User;
+import com.abdelrahman.blogplatorm.enums.Status;
 import com.abdelrahman.blogplatorm.mappers.PostMapper;
 import com.abdelrahman.blogplatorm.repositories.PostRepo;
 import com.abdelrahman.blogplatorm.repositories.UserRepo;
@@ -37,12 +38,15 @@ public class PostService {
 			}
 		}
 		Set<Tag> tags = new HashSet<>(tagService.getByNames(tagsNames));
-		User author =userRepo.findById(requestDto.getUserId()).get();
+		User author =userRepo.findById(requestDto.getUserId()).orElseThrow(()->new RuntimeException("User Not Found"));
 		Category category = catService.getById(requestDto.getCategoryId());		
 		Post post = mapper.toPost(requestDto);
 		post.setCategory(category);
 		post.setUser(author);
 		post.setTags(tags);
+		if(post.getStatus()==null) {
+			post.setStatus(Status.DRAFT);
+		}
 		return mapper.toPostDto(postRepo.save(post));
 	}
 
@@ -79,5 +83,4 @@ public class PostService {
 		}
 	}
 
-	
 }

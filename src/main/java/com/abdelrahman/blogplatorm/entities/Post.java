@@ -27,6 +27,9 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -77,4 +80,21 @@ public class Post {
 	@JsonManagedReference
 	private Set<Tag> tags = new HashSet<>();
 	
+//	@PostPersist
+//	protected void calcReadingTime() {
+//		int words = this.getContent().trim().split("\\s+").length;
+//		this.readingTime = (int)Math.ceil(words/200);
+//	}
+//	
+	@PrePersist
+	@PreUpdate
+	protected void calcReadingTime() {
+	    if (this.content != null && !this.content.isEmpty()) {
+	        // بنقسم على 200.0 عشان نضمن إنها قسمة decimal والكسر م يضيعش
+	        double words = this.content.trim().split("\\s+").length;
+	        this.readingTime = (int) Math.ceil(words / 200.0);
+	    } else {
+	        this.readingTime = 0;
+	    }
+	}
 }
