@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -50,7 +51,7 @@ public class Post {
 	private String content;
 	
 	private Integer readingTime;
-	
+	@ColumnDefault("DRAFT")
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Status status;

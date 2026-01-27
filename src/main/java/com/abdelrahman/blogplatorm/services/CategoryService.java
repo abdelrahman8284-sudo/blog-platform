@@ -48,4 +48,10 @@ public class CategoryService {
 	        .orElseThrow(() -> new RuntimeException("Category Not Found"));
 	}
 
+	public void delete(Long id) {
+		if(!catRepo.existsById(id)) {
+			throw new RuntimeException("Not Found !");
+		}
+		catRepo.deleteById(id);
+	}
 }

@@ -5,15 +5,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdelrahman.blogplatorm.dtos.requests.PostRequestDto;
-import com.abdelrahman.blogplatorm.entities.Post;
 import com.abdelrahman.blogplatorm.services.PostService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/post")
@@ -23,7 +23,7 @@ public class PostController {
 	private PostService postService;
 	
 	@PostMapping
-	public ResponseEntity<?> addPost(@RequestBody PostRequestDto dto){
+	public ResponseEntity<?> addPost(@RequestBody@Valid PostRequestDto dto){
 		return ResponseEntity.ok(postService.insert(dto));
 	}
 //	@PutMapping
@@ -34,7 +34,7 @@ public class PostController {
 	public ResponseEntity<?> findById(@PathVariable Long id){
 		return ResponseEntity.ok(postService.findById(id));
 	}
-	@GetMapping("/email")
+	@GetMapping("/title")
 	public ResponseEntity<?> findByTitle(@RequestParam String title){
 		return ResponseEntity.ok(postService.findByTitle(title));
 	}

@@ -25,7 +25,7 @@ public class UserController {
 	public ResponseEntity<?> createAccount(@RequestBody UserRequestDto dto){
 		return ResponseEntity.ok(userService.insert(dto));
 	}
-	@PutMapping
+	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody UserRequestDto dto){
 		return ResponseEntity.ok(userService.update(id,dto));
 	}

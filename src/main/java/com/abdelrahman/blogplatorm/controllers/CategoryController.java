@@ -2,6 +2,7 @@ package com.abdelrahman.blogplatorm.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdelrahman.blogplatorm.dtos.requests.CategoryRequestDto;
-import com.abdelrahman.blogplatorm.entities.Category;
 import com.abdelrahman.blogplatorm.services.CategoryService;
+
+import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
@@ -21,7 +23,7 @@ public class CategoryController {
 	private CategoryService categoryService;
 	
 	@PostMapping
-	public ResponseEntity<?> createCategory(@RequestBody CategoryRequestDto category){
+	public ResponseEntity<?> createCategory(@RequestBody@Valid CategoryRequestDto category){
 		return ResponseEntity.ok(categoryService.insert(category));
 	}
 	@PutMapping
@@ -40,5 +42,9 @@ public class CategoryController {
 	@GetMapping
 	public ResponseEntity<?> findAll(){
 		return ResponseEntity.ok(categoryService.findAll());
+	}
+	@DeleteMapping("/{id}")
+	public void delete(@PathVariable Long id){
+		categoryService.delete(id);
 	}
 }

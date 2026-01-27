@@ -12,7 +12,7 @@ public interface TagRepo extends JpaRepository<Tag, Long> {
 
 	Optional<Tag> findByName(String name);
 
-	List<Tag> findAllByName(Iterable<String> tagsName);
+	List<Tag> findAllByNameIn(Iterable<String> tagsName);
 	
 	boolean existsByName(String name);
 }

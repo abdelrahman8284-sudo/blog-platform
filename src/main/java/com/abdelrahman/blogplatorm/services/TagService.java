@@ -48,11 +48,11 @@ public class TagService {
 	}
 	
 	public List<TagResponseDto> findAllByName(List<String> tagsNames){
-		return mapper.toListDto(tagRepo.findAllByName(tagsNames));
+		return mapper.toListDto(tagRepo.findAllByNameIn(tagsNames));
 	}
 	
 	public List<Tag> getByNames(List<String> names) {
-	    return tagRepo.findAllByName(names);
+	    return tagRepo.findAllByNameIn(names);
 	}
 	
 	public boolean isExist(String name) {
