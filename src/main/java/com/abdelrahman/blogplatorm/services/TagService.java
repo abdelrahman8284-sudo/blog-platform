@@ -10,6 +10,7 @@ import com.abdelrahman.blogplatorm.entities.Tag;
 import com.abdelrahman.blogplatorm.mappers.TagMapper;
 import com.abdelrahman.blogplatorm.repositories.TagRepo;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,11 +25,10 @@ public class TagService {
 		return mapper.toDto(tagRepo.save(mapper.toEntity(dto)));
 	}
 
-	public TagResponseDto update(Long id,TagRequestDto dto) {
-		if(tagRepo.findById(id).isEmpty()) {
-			throw new RuntimeException("Tag Not found");
-		}
-		return mapper.toDto(tagRepo.save(mapper.toEntity(dto)));
+	public TagResponseDto update(Long id, TagRequestDto dto) {
+	    Tag tag = tagRepo.findById(id).orElseThrow(() -> new RuntimeException("Tag Not found"));
+	    tag.setName(dto.getName());
+	    return mapper.toDto(tagRepo.save(tag));
 	}
 	
 	public TagResponseDto findByName(String tagName) {
@@ -53,6 +53,17 @@ public class TagService {
 	
 	public List<Tag> getByNames(List<String> names) {
 	    return tagRepo.findAllByNameIn(names);
+	}
+	@Transactional
+	public List<Tag> getOrCreateByNames(List<String> names) {
+		List<String> normNames = names.stream().map(String::trim).map(String::toLowerCase).toList();
+		for (String name : normNames) {
+			if(!isExist(name)) {
+				insert(new TagRequestDto(name));
+			}
+		}
+		
+	    return tagRepo.findAllByNameIn(normNames);
 	}
 	
 	public boolean isExist(String name) {

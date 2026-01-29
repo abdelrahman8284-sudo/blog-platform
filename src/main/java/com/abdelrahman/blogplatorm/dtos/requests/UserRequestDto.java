@@ -1,7 +1,5 @@
 package com.abdelrahman.blogplatorm.dtos.requests;
 
-import java.util.List;
-
 import com.abdelrahman.blogplatorm.enums.Role;
 
 import jakarta.validation.constraints.Email;

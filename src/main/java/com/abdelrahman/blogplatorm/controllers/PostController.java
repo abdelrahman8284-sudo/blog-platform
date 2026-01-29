@@ -5,12 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdelrahman.blogplatorm.dtos.requests.PostRequestDto;
+import com.abdelrahman.blogplatorm.dtos.update.PostUpdateDto;
 import com.abdelrahman.blogplatorm.services.PostService;
 
 import jakarta.validation.Valid;
@@ -26,10 +28,10 @@ public class PostController {
 	public ResponseEntity<?> addPost(@RequestBody@Valid PostRequestDto dto){
 		return ResponseEntity.ok(postService.insert(dto));
 	}
-//	@PutMapping
-//	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody Post post){
-//		return ResponseEntity.ok(postService.update(id,post));
-//	}
+	@PutMapping("/id/{id}")
+	public ResponseEntity<?> update(@PathVariable Long id,@Valid@RequestBody PostUpdateDto post){
+		return ResponseEntity.ok(postService.update(id,post));
+	}
 	@GetMapping("/id/{id}")
 	public ResponseEntity<?> findById(@PathVariable Long id){
 		return ResponseEntity.ok(postService.findById(id));

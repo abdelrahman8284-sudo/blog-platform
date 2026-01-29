@@ -24,15 +24,18 @@ public class CategoryService {
 		return mapper.toDto(catRepo.save(mapper.toEntity(dto)));
 	}
 
-	public CategoryResponseDto update(Long id,CategoryRequestDto dto) {
-		if(catRepo.findById(id).isEmpty()) {
-			throw new RuntimeException("Category Not found");
-		}
-		return mapper.toDto(catRepo.save(mapper.toEntity(dto)));
+	public CategoryResponseDto update(Long id, CategoryRequestDto dto) {
+	    Category tag = catRepo.findById(id).orElseThrow(() -> new RuntimeException("Tag Not found"));
+	    tag.setName(dto.getName()); 
+	    return mapper.toDto(catRepo.save(tag));
 	}
 	
 	public CategoryResponseDto findByName(String categoryName) {
 		return mapper.toDto(catRepo.findByName(categoryName).orElseThrow(()->new RuntimeException("Category Not found")));
+	}
+	
+	public Category getByName(String catName) {
+		return catRepo.findByName(catName).orElseThrow(()->new RuntimeException("Category not found"));
 	}
 	
 	public List<CategoryResponseDto> findAll(){
@@ -53,5 +56,9 @@ public class CategoryService {
 			throw new RuntimeException("Not Found !");
 		}
 		catRepo.deleteById(id);
+	}
+	
+	public boolean isExistByName(String catName) {
+		return catRepo.existsByName(catName);
 	}
 }

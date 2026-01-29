@@ -10,5 +10,6 @@ import com.abdelrahman.blogplatorm.entities.Category;
 public interface CategoryRepo extends JpaRepository<Category, Long> {
 
 	Optional<Category> findByName(String categoryName);
+	boolean existsByName(String catName);
 
 }

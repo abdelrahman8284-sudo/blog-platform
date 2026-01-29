@@ -3,12 +3,14 @@ package com.abdelrahman.blogplatorm.services;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.abdelrahman.blogplatorm.dtos.requests.PostRequestDto;
 import com.abdelrahman.blogplatorm.dtos.requests.TagRequestDto;
 import com.abdelrahman.blogplatorm.dtos.responses.PostResponseDto;
+import com.abdelrahman.blogplatorm.dtos.update.PostUpdateDto;
 import com.abdelrahman.blogplatorm.entities.Category;
 import com.abdelrahman.blogplatorm.entities.Post;
 import com.abdelrahman.blogplatorm.entities.Tag;
@@ -18,6 +20,7 @@ import com.abdelrahman.blogplatorm.mappers.PostMapper;
 import com.abdelrahman.blogplatorm.repositories.PostRepo;
 import com.abdelrahman.blogplatorm.repositories.UserRepo;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -31,34 +34,21 @@ public class PostService {
 	private final CategoryService catService;
 
 	public PostResponseDto insert(PostRequestDto requestDto) {
-		List<String> tagsNames= requestDto.getTags();
-		for (String tagName : tagsNames) {
-			if(!tagService.isExist(tagName)) {
-				tagService.insert(new TagRequestDto(tagName));
-			}
-		}
-		Set<Tag> tags = new HashSet<>(tagService.getByNames(tagsNames));
+		Set<Tag> tags = new HashSet<>(tagService.getOrCreateByNames(requestDto.getTags()));
+		
 		User author =userRepo.findById(requestDto.getUserId()).orElseThrow(()->new RuntimeException("User Not Found"));
 		Category category = catService.getById(requestDto.getCategoryId());		
+		
 		Post post = mapper.toPost(requestDto);
 		post.setCategory(category);
 		post.setUser(author);
 		post.setTags(tags);
+		
 		if(post.getStatus()==null) {
 			post.setStatus(Status.DRAFT);
 		}
 		return mapper.toPostDto(postRepo.save(post));
 	}
-
-//	public Post update(Long id, Post post) {
-//		Post currentPost = postRepo.findById(id).orElseThrow(()->new RuntimeException("Post Not Found"));
-//		currentPost.setContent(post.getContent());
-//		currentPost.setCategory(post.getCategory());
-//		currentPost.setCreatedAt(post.getCreatedAt());
-//		currentPost.setReadingTime(post.getReadingTime());
-//		currentPost.setStatus(post.getSta);
-//		return postRepo.save(post);
-//	}
 
 	public List<PostResponseDto> findAll() {
 		
@@ -74,7 +64,7 @@ public class PostService {
 	}
 
 	public String delete(Long id) {
-		if(postRepo.findById(id).isEmpty()) {
+		if(!postRepo.existsById(id)) {
 			return "This post is not found to delete";
 		}
 		else {
@@ -82,5 +72,30 @@ public class PostService {
 			return "This post deleted successfully";
 		}
 	}
+	
+	@Transactional
+	public PostResponseDto update(Long id,PostUpdateDto postUpdate) {
+		Post post = postRepo.findById(id).orElseThrow(()->new RuntimeException("Post Not Found"));
+		if(postUpdate.getTitle()!=null && !postUpdate.getTitle().isBlank()) {
+			post.setTitle(postUpdate.getTitle());
+		}
+		if(postUpdate.getContent()!=null && !postUpdate.getContent().isBlank()) {
+			post.setContent(postUpdate.getContent());
+		}
+		if(postUpdate.getCatName()!= null && !postUpdate.getCatName().isBlank()) {
+			if(!catService.isExistByName(postUpdate.getCatName())){
+				throw new RuntimeException(postUpdate.getCatName() +"Not Found category");
+			}
+			Category category = catService.getByName(postUpdate.getCatName());
+			post.setCategory(category);
+		}
+		
+		if(postUpdate.getTagNames()!=null && !postUpdate.getTagNames().isEmpty()) {
+			Set<Tag> tags = tagService.getOrCreateByNames(postUpdate.getTagNames()).stream().collect(Collectors.toSet());
+			post.setTags(tags);
+		}
+		return mapper.toPostDto(postRepo.save(post));
+	}
+	
 
 }
