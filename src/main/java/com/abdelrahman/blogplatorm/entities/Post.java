@@ -65,6 +65,8 @@ public class Post {
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
 	
+	private LocalDateTime publishedAt;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	@JsonManagedReference

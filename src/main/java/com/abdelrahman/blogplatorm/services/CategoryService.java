@@ -41,6 +41,11 @@ public class CategoryService {
 	public List<CategoryResponseDto> findAll(){
 		return mapper.toListDto(catRepo.findAll());
 	}
+	
+	public List<CategoryResponseDto> listCategories(){
+		List<CategoryResponseDto> dtos = mapper.toListDto(catRepo.findAllWithPostCount());	
+		return dtos;
+	}
 
 	public CategoryResponseDto findById(Long id) {	
 		return mapper.toDto(catRepo.findById(id).orElseThrow(()->new RuntimeException("Category Not Found")));

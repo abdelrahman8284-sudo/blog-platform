@@ -1,6 +1,5 @@
 package com.abdelrahman.blogplatorm.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,27 +15,32 @@ import com.abdelrahman.blogplatorm.dtos.update.PostUpdateDto;
 import com.abdelrahman.blogplatorm.services.PostService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/api/v1/posts")
+@RequiredArgsConstructor
 public class PostController {
 
-	@Autowired
-	private PostService postService;
+	private final PostService postService;
 	
 	@PostMapping
 	public ResponseEntity<?> addPost(@RequestBody@Valid PostRequestDto dto){
 		return ResponseEntity.ok(postService.insert(dto));
 	}
-	@PutMapping("/id/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@PathVariable Long id,@Valid@RequestBody PostUpdateDto post){
 		return ResponseEntity.ok(postService.update(id,post));
 	}
-	@GetMapping("/id/{id}")
+	@PutMapping("/publish/{id}")
+	public ResponseEntity<?> publish(@PathVariable Long id){
+		return ResponseEntity.ok(postService.publishPost(id));
+	}
+	@GetMapping("/{id}")
 	public ResponseEntity<?> findById(@PathVariable Long id){
 		return ResponseEntity.ok(postService.findById(id));
 	}
-	@GetMapping("/title")
+	@GetMapping("/search")
 	public ResponseEntity<?> findByTitle(@RequestParam String title){
 		return ResponseEntity.ok(postService.findByTitle(title));
 	}
@@ -44,4 +48,9 @@ public class PostController {
 	public ResponseEntity<?> findAll(){
 		return ResponseEntity.ok(postService.findAll());
 	} 
+	
+	@GetMapping("/drafts")
+	public ResponseEntity<?> findDrafts(){
+		return ResponseEntity.ok(postService.findAll());
+	}
 }

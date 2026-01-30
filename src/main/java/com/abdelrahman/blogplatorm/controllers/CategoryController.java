@@ -1,6 +1,5 @@
 package com.abdelrahman.blogplatorm.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,35 +15,42 @@ import com.abdelrahman.blogplatorm.dtos.requests.CategoryRequestDto;
 import com.abdelrahman.blogplatorm.services.CategoryService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/api/v1/categories")
+@RequiredArgsConstructor
 public class CategoryController {
-	@Autowired
-	private CategoryService categoryService;
+	
+	private final CategoryService categoryService;
 	
 	@PostMapping
 	public ResponseEntity<?> createCategory(@RequestBody@Valid CategoryRequestDto category){
 		return ResponseEntity.ok(categoryService.insert(category));
 	}
-	@PutMapping
+	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody CategoryRequestDto category){
 		return ResponseEntity.ok(categoryService.update(id,category));
 	}
-	@GetMapping("/id/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<?> findById(@PathVariable Long id){
 		return ResponseEntity.ok(categoryService.findById(id));
 	}
 	
-	@GetMapping("/name")
+	@GetMapping("/search")
 	public ResponseEntity<?> findByName(@RequestParam String name){
 		return ResponseEntity.ok(categoryService.findByName(name));
 	}
-	@GetMapping
+//	@GetMapping
+//	public ResponseEntity<?> findAll(){
+//		return ResponseEntity.ok(categoryService.findAll());
+//	}
+	@GetMapping("/all")
 	public ResponseEntity<?> findAll(){
-		return ResponseEntity.ok(categoryService.findAll());
+		return ResponseEntity.ok(categoryService.listCategories());
 	}
 	@DeleteMapping("/{id}")
-	public void delete(@PathVariable Long id){
+	public ResponseEntity<Void> delete(@PathVariable Long id){
 		categoryService.delete(id);
+		return ResponseEntity.noContent().build();
 	}
 }

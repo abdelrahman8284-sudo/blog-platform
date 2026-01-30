@@ -1,5 +1,6 @@
 package com.abdelrahman.blogplatorm.services;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.abdelrahman.blogplatorm.dtos.requests.PostRequestDto;
-import com.abdelrahman.blogplatorm.dtos.requests.TagRequestDto;
 import com.abdelrahman.blogplatorm.dtos.responses.PostResponseDto;
 import com.abdelrahman.blogplatorm.dtos.update.PostUpdateDto;
 import com.abdelrahman.blogplatorm.entities.Category;
@@ -52,15 +52,19 @@ public class PostService {
 
 	public List<PostResponseDto> findAll() {
 		
-		return mapper.toListDto(postRepo.findAll());
+		return mapper.toListDto(postRepo.findAllByStatus(Status.PUBLISHED));
+	}
+	
+	public List<PostResponseDto> findDrafts() {
+	    return mapper.toListDto(postRepo.findAllByStatus(Status.DRAFT));
 	}
 
 	public PostResponseDto findById(Long id) {
-		return mapper.toPostDto(postRepo.findById(id).orElseThrow(() -> new RuntimeException("Post Not Found")));	
+		return mapper.toPostDto(postRepo.findByIdAndStatus(id,Status.PUBLISHED).orElseThrow(() -> new RuntimeException("Post Not Found")));	
 	}
 	
 	public List<PostResponseDto> findByTitle(String title) {
-		return 	mapper.toListDto(postRepo.findByTitle(title));
+		return 	mapper.toListDto(postRepo.findByTitle(title,Status.PUBLISHED));
 	}
 
 	public String delete(Long id) {
@@ -97,5 +101,14 @@ public class PostService {
 		return mapper.toPostDto(postRepo.save(post));
 	}
 	
+	public PostResponseDto publishPost(Long id) {
+		Post post = postRepo.findById(id).orElseThrow(()->new RuntimeException("Not found post"));
+		if(post.getStatus()==Status.PUBLISHED) {
+			throw new RuntimeException("Status already published");
+		}
+		post.setStatus(Status.PUBLISHED);
+		post.setPublishedAt(LocalDateTime.now());
+		return mapper.toPostDto(postRepo.save(post));
+	}
 
 }

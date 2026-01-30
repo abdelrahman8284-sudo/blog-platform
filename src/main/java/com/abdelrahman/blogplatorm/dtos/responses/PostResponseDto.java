@@ -24,6 +24,8 @@ public class PostResponseDto {
 	
 	private LocalDateTime updatedAt;
 	
+	private LocalDateTime publishedAt;
+	
 	private Status status;
 	
 	private Integer readingTime;

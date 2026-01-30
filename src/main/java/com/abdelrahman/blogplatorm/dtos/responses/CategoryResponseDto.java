@@ -12,5 +12,5 @@ public class CategoryResponseDto {
 	
 	private String name;
 	
-	private Integer postCount;
+	private long postCount;
 }
