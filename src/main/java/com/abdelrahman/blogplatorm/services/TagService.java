@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.abdelrahman.blogplatorm.dtos.requests.TagRequestDto;
 import com.abdelrahman.blogplatorm.dtos.responses.TagResponseDto;
 import com.abdelrahman.blogplatorm.entities.Tag;
+import com.abdelrahman.blogplatorm.exceptions.RecordNotFoundException;
 import com.abdelrahman.blogplatorm.mappers.TagMapper;
 import com.abdelrahman.blogplatorm.repositories.TagRepo;
 
@@ -26,13 +27,13 @@ public class TagService {
 	}
 
 	public TagResponseDto update(Long id, TagRequestDto dto) {
-	    Tag tag = tagRepo.findById(id).orElseThrow(() -> new RuntimeException("Tag Not found"));
+	    Tag tag = tagRepo.findById(id).orElseThrow(() -> new RecordNotFoundException("Tag Not found"));
 	    tag.setName(dto.getName());
 	    return mapper.toDto(tagRepo.save(tag));
 	}
 	
 	public TagResponseDto findByName(String tagName) {
-		return mapper.toDto(tagRepo.findByName(tagName).orElseThrow(()->new RuntimeException("Tag Not found")));
+		return mapper.toDto(tagRepo.findByName(tagName).orElseThrow(()->new RecordNotFoundException("Tag Not found")));
 	}
 	
 	public List<TagResponseDto> findAll(){
@@ -40,7 +41,7 @@ public class TagService {
 	}
 
 	public TagResponseDto findById(Long id) {	
-		return mapper.toDto(tagRepo.findById(id).orElseThrow(()->new RuntimeException("Tag Not Found")));
+		return mapper.toDto(tagRepo.findById(id).orElseThrow(()->new RecordNotFoundException("Tag Not Found")));
 	}
 
 	public List<TagResponseDto> findAllById(List<Long> tagsIds) {

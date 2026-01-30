@@ -10,7 +10,7 @@ import com.abdelrahman.blogplatorm.entities.Post;
 import com.abdelrahman.blogplatorm.enums.Status;
 @Repository
 public interface PostRepo extends JpaRepository<Post, Long> {
-	List<Post> findByTitle(String title,Status status);
+	List<Post> findByTitleAndStatus(String title,Status status);
 	
 	Optional<Post> findByIdAndStatus(Long id,Status status);
 	

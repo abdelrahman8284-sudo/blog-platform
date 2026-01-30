@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.abdelrahman.blogplatorm.dtos.requests.UserRequestDto;
 import com.abdelrahman.blogplatorm.dtos.responses.UserResponseDto;
 import com.abdelrahman.blogplatorm.entities.User;
+import com.abdelrahman.blogplatorm.exceptions.RecordNotFoundException;
 import com.abdelrahman.blogplatorm.mappers.UserMapper;
 import com.abdelrahman.blogplatorm.repositories.UserRepo;
 
@@ -26,7 +27,7 @@ public class UserService {
 	}
 	
 	public UserResponseDto update(Long id,UserRequestDto dto) {
-		User currentUser = userRepo.findById(id).orElseThrow(()->new RuntimeException("User Not found"));
+		User currentUser = userRepo.findById(id).orElseThrow(()->new RecordNotFoundException("User Not found"));
 		User user = mapper.toUserEntity(dto);
 		currentUser.setName(user.getName());
 		currentUser.setEmail(user.getEmail());
@@ -44,7 +45,7 @@ public class UserService {
 	}
 	
 	public UserResponseDto findByEmail(String email) {
-		return mapper.toUserDto(userRepo.findByEmail(email).orElseThrow(()->new RuntimeException("User not Found")));
+		return mapper.toUserDto(userRepo.findByEmail(email).orElseThrow(()->new RecordNotFoundException("User not Found")));
 	}
 	
 	public void delete(Long id) {

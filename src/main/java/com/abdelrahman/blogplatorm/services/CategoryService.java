@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.abdelrahman.blogplatorm.dtos.requests.CategoryRequestDto;
 import com.abdelrahman.blogplatorm.dtos.responses.CategoryResponseDto;
 import com.abdelrahman.blogplatorm.entities.Category;
+import com.abdelrahman.blogplatorm.exceptions.RecordNotFoundException;
 import com.abdelrahman.blogplatorm.mappers.CategoryMapper;
 import com.abdelrahman.blogplatorm.repositories.CategoryRepo;
 
@@ -25,17 +26,17 @@ public class CategoryService {
 	}
 
 	public CategoryResponseDto update(Long id, CategoryRequestDto dto) {
-	    Category tag = catRepo.findById(id).orElseThrow(() -> new RuntimeException("Tag Not found"));
+	    Category tag = catRepo.findById(id).orElseThrow(() -> new RecordNotFoundException("Tag Not found"));
 	    tag.setName(dto.getName()); 
 	    return mapper.toDto(catRepo.save(tag));
 	}
 	
 	public CategoryResponseDto findByName(String categoryName) {
-		return mapper.toDto(catRepo.findByName(categoryName).orElseThrow(()->new RuntimeException("Category Not found")));
+		return mapper.toDto(catRepo.findByName(categoryName).orElseThrow(()->new RecordNotFoundException("Category Not found")));
 	}
 	
 	public Category getByName(String catName) {
-		return catRepo.findByName(catName).orElseThrow(()->new RuntimeException("Category not found"));
+		return catRepo.findByName(catName).orElseThrow(()->new RecordNotFoundException("Category not found"));
 	}
 	
 	public List<CategoryResponseDto> findAll(){
@@ -53,12 +54,12 @@ public class CategoryService {
 	
 	public Category getById(Long id) {
 	    return catRepo.findById(id)
-	        .orElseThrow(() -> new RuntimeException("Category Not Found"));
+	        .orElseThrow(() -> new RecordNotFoundException("Category Not Found"));
 	}
 
 	public void delete(Long id) {
 		if(!catRepo.existsById(id)) {
-			throw new RuntimeException("Not Found !");
+			throw new RecordNotFoundException("Not Found !");
 		}
 		catRepo.deleteById(id);
 	}

@@ -16,6 +16,7 @@ import com.abdelrahman.blogplatorm.entities.Post;
 import com.abdelrahman.blogplatorm.entities.Tag;
 import com.abdelrahman.blogplatorm.entities.User;
 import com.abdelrahman.blogplatorm.enums.Status;
+import com.abdelrahman.blogplatorm.exceptions.RecordNotFoundException;
 import com.abdelrahman.blogplatorm.mappers.PostMapper;
 import com.abdelrahman.blogplatorm.repositories.PostRepo;
 import com.abdelrahman.blogplatorm.repositories.UserRepo;
@@ -36,7 +37,7 @@ public class PostService {
 	public PostResponseDto insert(PostRequestDto requestDto) {
 		Set<Tag> tags = new HashSet<>(tagService.getOrCreateByNames(requestDto.getTags()));
 		
-		User author =userRepo.findById(requestDto.getUserId()).orElseThrow(()->new RuntimeException("User Not Found"));
+		User author =userRepo.findById(requestDto.getUserId()).orElseThrow(()->new RecordNotFoundException("User Not Found"));
 		Category category = catService.getById(requestDto.getCategoryId());		
 		
 		Post post = mapper.toPost(requestDto);
@@ -60,11 +61,11 @@ public class PostService {
 	}
 
 	public PostResponseDto findById(Long id) {
-		return mapper.toPostDto(postRepo.findByIdAndStatus(id,Status.PUBLISHED).orElseThrow(() -> new RuntimeException("Post Not Found")));	
+		return mapper.toPostDto(postRepo.findByIdAndStatus(id,Status.PUBLISHED).orElseThrow(() -> new RecordNotFoundException("Post Not Found")));	
 	}
 	
 	public List<PostResponseDto> findByTitle(String title) {
-		return 	mapper.toListDto(postRepo.findByTitle(title,Status.PUBLISHED));
+		return 	mapper.toListDto(postRepo.findByTitleAndStatus(title,Status.PUBLISHED));
 	}
 
 	public String delete(Long id) {
@@ -79,7 +80,7 @@ public class PostService {
 	
 	@Transactional
 	public PostResponseDto update(Long id,PostUpdateDto postUpdate) {
-		Post post = postRepo.findById(id).orElseThrow(()->new RuntimeException("Post Not Found"));
+		Post post = postRepo.findById(id).orElseThrow(()->new RecordNotFoundException("Post Not Found"));
 		if(postUpdate.getTitle()!=null && !postUpdate.getTitle().isBlank()) {
 			post.setTitle(postUpdate.getTitle());
 		}
@@ -88,7 +89,7 @@ public class PostService {
 		}
 		if(postUpdate.getCatName()!= null && !postUpdate.getCatName().isBlank()) {
 			if(!catService.isExistByName(postUpdate.getCatName())){
-				throw new RuntimeException(postUpdate.getCatName() +"Not Found category");
+				throw new RecordNotFoundException(postUpdate.getCatName() +"Not Found category");
 			}
 			Category category = catService.getByName(postUpdate.getCatName());
 			post.setCategory(category);
@@ -102,9 +103,9 @@ public class PostService {
 	}
 	
 	public PostResponseDto publishPost(Long id) {
-		Post post = postRepo.findById(id).orElseThrow(()->new RuntimeException("Not found post"));
+		Post post = postRepo.findById(id).orElseThrow(()->new RecordNotFoundException("Not found post"));
 		if(post.getStatus()==Status.PUBLISHED) {
-			throw new RuntimeException("Status already published");
+			throw new RuntimeException("Post already published");
 		}
 		post.setStatus(Status.PUBLISHED);
 		post.setPublishedAt(LocalDateTime.now());
