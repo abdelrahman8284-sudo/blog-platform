@@ -18,7 +18,7 @@ public interface PostMapper {
 	
 
 	@Mappings({
-		@Mapping(target="userName",source="user.name"),
+		@Mapping(target="userName",source="user.username"),
 		@Mapping(target="categoryName",source="category.name")
 	})
 	PostResponseDto toPostDto(Post post);

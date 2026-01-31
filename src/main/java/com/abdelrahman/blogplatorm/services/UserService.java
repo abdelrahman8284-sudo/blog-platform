@@ -2,6 +2,7 @@ package com.abdelrahman.blogplatorm.services;
 
 import java.util.List;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.abdelrahman.blogplatorm.dtos.requests.UserRequestDto;
@@ -21,15 +22,18 @@ public class UserService {
 	private final UserRepo userRepo;
 	private final UserMapper mapper;
 	
-	public UserResponseDto insert(UserRequestDto dto) {
+	private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+	
+	public UserResponseDto register(UserRequestDto dto) {
 		User user = mapper.toUserEntity(dto);
+		user.setPassword(encoder.encode(dto.getPassword()));
 		return mapper.toUserDto(userRepo.save(user));
 	}
 	
 	public UserResponseDto update(Long id,UserRequestDto dto) {
 		User currentUser = userRepo.findById(id).orElseThrow(()->new RecordNotFoundException("User Not found"));
 		User user = mapper.toUserEntity(dto);
-		currentUser.setName(user.getName());
+		currentUser.setUsername(user.getUsername());
 		currentUser.setEmail(user.getEmail());
 		currentUser.setPassword(user.getPassword());
 		return mapper.toUserDto(userRepo.save(currentUser));

@@ -25,9 +25,9 @@ public class UserController {
 	
 	private final UserService userService;
 	
-	@PostMapping
-	public ResponseEntity<?> createAccount(@RequestBody UserRequestDto dto){
-		return ResponseEntity.ok(userService.insert(dto));
+	@PostMapping("/register")
+	public ResponseEntity<?> register(@RequestBody UserRequestDto dto){
+		return ResponseEntity.ok(userService.register(dto));
 	}
 	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody UserRequestDto dto){

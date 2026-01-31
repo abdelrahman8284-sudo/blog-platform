@@ -13,7 +13,7 @@ import lombok.Setter;
 public class UserRequestDto {
 
 	
-	private String name;
+	private String username;
 	@NotBlank
 	@Email
 	private String email;
