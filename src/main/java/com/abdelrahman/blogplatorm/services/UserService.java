@@ -2,6 +2,9 @@ package com.abdelrahman.blogplatorm.services;
 
 import java.util.List;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +14,8 @@ import com.abdelrahman.blogplatorm.entities.User;
 import com.abdelrahman.blogplatorm.exceptions.RecordNotFoundException;
 import com.abdelrahman.blogplatorm.mappers.UserMapper;
 import com.abdelrahman.blogplatorm.repositories.UserRepo;
+import com.abdelrahman.blogplatorm.security.dtos.UserLoginDto;
+import com.abdelrahman.blogplatorm.security.services.JwtService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +26,9 @@ public class UserService {
 	
 	private final UserRepo userRepo;
 	private final UserMapper mapper;
+	private final AuthenticationManager manager;
+	private final JwtService jwtService;
+	
 	
 	private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
 	
@@ -56,5 +64,20 @@ public class UserService {
 		if(!userRepo.existsById(id))
 			throw new RuntimeException("User Not Found");
 		userRepo.deleteById(id);
+	}
+
+	private String verfiy(UserLoginDto user) {
+		Authentication authentication = manager.authenticate(
+				new UsernamePasswordAuthenticationToken(
+						user.getEmail(), user.getPassword()));
+		if(authentication.isAuthenticated()) {
+			return jwtService.generateToken(user.getEmail());
+		}
+		return "Fail";
+	}
+	
+	public String login(UserLoginDto loginDto) {
+		
+		return verfiy(loginDto);
 	}
 }

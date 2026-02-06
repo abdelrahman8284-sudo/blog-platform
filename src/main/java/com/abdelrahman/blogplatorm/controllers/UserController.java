@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdelrahman.blogplatorm.dtos.requests.UserRequestDto;
+import com.abdelrahman.blogplatorm.security.dtos.UserLoginDto;
 import com.abdelrahman.blogplatorm.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,11 @@ public class UserController {
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestBody UserRequestDto dto){
 		return ResponseEntity.ok(userService.register(dto));
+	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody UserLoginDto loginDto){
+		return ResponseEntity.ok(userService.login(loginDto));
 	}
 	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody UserRequestDto dto){
