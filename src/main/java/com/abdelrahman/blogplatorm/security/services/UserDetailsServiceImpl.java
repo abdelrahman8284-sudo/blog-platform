@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.abdelrahman.blogplatorm.entities.User;
 import com.abdelrahman.blogplatorm.repositories.UserRepo;
-import com.abdelrahman.blogplatorm.security.dtos.MyUserPricipale;
+import com.abdelrahman.blogplatorm.security.dtos.MyUserPrinciple;
 
 import lombok.RequiredArgsConstructor;
 @Service
@@ -18,7 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepo.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("User not Found"));
-		return new MyUserPricipale(user);
+		return new MyUserPrinciple(user);
 	}
 
 }

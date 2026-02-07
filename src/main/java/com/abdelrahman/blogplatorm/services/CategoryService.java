@@ -26,7 +26,7 @@ public class CategoryService {
 	}
 
 	public CategoryResponseDto update(Long id, CategoryRequestDto dto) {
-	    Category tag = catRepo.findById(id).orElseThrow(() -> new RecordNotFoundException("Tag Not found"));
+	    Category tag = catRepo.findById(id).orElseThrow(() -> new RecordNotFoundException("Category Not found"));
 	    tag.setName(dto.getName()); 
 	    return mapper.toDto(catRepo.save(tag));
 	}

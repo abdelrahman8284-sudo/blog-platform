@@ -1,6 +1,7 @@
 package com.abdelrahman.blogplatorm.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,10 +25,12 @@ public class CategoryController {
 	private final CategoryService categoryService;
 	
 	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> createCategory(@RequestBody@Valid CategoryRequestDto category){
 		return ResponseEntity.ok(categoryService.insert(category));
 	}
 	@PutMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody CategoryRequestDto category){
 		return ResponseEntity.ok(categoryService.update(id,category));
 	}
@@ -48,6 +51,7 @@ public class CategoryController {
 	public ResponseEntity<?> findAll(){
 		return ResponseEntity.ok(categoryService.listCategories());
 	}
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id){
 		categoryService.delete(id);

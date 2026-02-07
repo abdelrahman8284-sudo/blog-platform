@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.abdelrahman.blogplatorm.dtos.requests.PostRequestDto;
@@ -20,6 +23,7 @@ import com.abdelrahman.blogplatorm.exceptions.RecordNotFoundException;
 import com.abdelrahman.blogplatorm.mappers.PostMapper;
 import com.abdelrahman.blogplatorm.repositories.PostRepo;
 import com.abdelrahman.blogplatorm.repositories.UserRepo;
+import com.abdelrahman.blogplatorm.security.dtos.MyUserPrinciple;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +41,12 @@ public class PostService {
 	public PostResponseDto insert(PostRequestDto requestDto) {
 		Set<Tag> tags = new HashSet<>(tagService.getOrCreateByNames(requestDto.getTags()));
 		
-		User author =userRepo.findById(requestDto.getUserId()).orElseThrow(()->new RecordNotFoundException("User Not Found"));
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		MyUserPrinciple user = (MyUserPrinciple) auth.getPrincipal();
+		if(!user.getId().equals(requestDto.getUserId())) {
+			throw new AccessDeniedException("userId Not Allowed");
+		}
+	 	User author = userRepo.findById(user.getId()).orElseThrow(()->new RecordNotFoundException("User Not Found"));
 		Category category = catService.getById(requestDto.getCategoryId());		
 		
 		Post post = mapper.toPost(requestDto);
@@ -56,9 +65,15 @@ public class PostService {
 		return mapper.toListDto(postRepo.findAllByStatus(Status.PUBLISHED));
 	}
 	
-	public List<PostResponseDto> findDrafts() {
-	    return mapper.toListDto(postRepo.findAllByStatus(Status.DRAFT));
+	public List<PostResponseDto> findDraftsForCurrentUser() {
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    MyUserPrinciple user = (MyUserPrinciple) auth.getPrincipal();
+
+	    return mapper.toListDto(
+	        postRepo.findByUserIdAndStatus(user.getId(), Status.DRAFT)
+	    );
 	}
+
 
 	public PostResponseDto findById(Long id) {
 		return mapper.toPostDto(postRepo.findByIdAndStatus(id,Status.PUBLISHED).orElseThrow(() -> new RecordNotFoundException("Post Not Found")));	

@@ -33,9 +33,9 @@ public class JwtService {
 		}
 	}
 	
-	public String generateToken(String email) {
+	public String generateToken(String email,String role) {
 		Map<String,Object> claims = new HashMap<>();
-		
+		claims.put("role", role.toUpperCase());
 		return Jwts.builder()
 				.claims()
 				.add(claims)

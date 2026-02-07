@@ -1,6 +1,7 @@
 package com.abdelrahman.blogplatorm.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,14 +26,17 @@ public class PostController {
 	private final PostService postService;
 	
 	@PostMapping
+	@PreAuthorize("hasAnyRole('ADMIN','AUTHOR')")
 	public ResponseEntity<?> addPost(@RequestBody@Valid PostRequestDto dto){
 		return ResponseEntity.ok(postService.insert(dto));
 	}
 	@PutMapping("/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN','AUTHOR')")
 	public ResponseEntity<?> update(@PathVariable Long id,@Valid@RequestBody PostUpdateDto post){
 		return ResponseEntity.ok(postService.update(id,post));
 	}
 	@PutMapping("/publish/{id}")
+	@PreAuthorize("hasAnyRole('AUTHOR','ADMIN')")
 	public ResponseEntity<?> publish(@PathVariable Long id){
 		return ResponseEntity.ok(postService.publishPost(id));
 	}
@@ -48,8 +52,9 @@ public class PostController {
 	public ResponseEntity<?> findAll(){
 		return ResponseEntity.ok(postService.findAll());
 	} 
-	
+	// تعديل ان لازم ال AUTHOR الي يشوف ده يشوف الخاص بيه بس
 	@GetMapping("/drafts")
+	@PreAuthorize("hasAnyRole('ADMIN','AUTHOR')")
 	public ResponseEntity<?> findDrafts(){
 		return ResponseEntity.ok(postService.findAll());
 	}

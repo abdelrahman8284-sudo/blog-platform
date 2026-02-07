@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class MyUserPricipale implements UserDetails{
+public class MyUserPrinciple implements UserDetails{
 
 	private User user;
 	
@@ -32,6 +32,10 @@ public class MyUserPricipale implements UserDetails{
 	@Override
 	public String getUsername() {
 		return user.getEmail();
+	}
+	
+	public Long getId() {
+		return user.getId();
 	}
 
 }

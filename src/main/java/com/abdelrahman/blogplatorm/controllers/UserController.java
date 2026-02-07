@@ -1,7 +1,7 @@
 package com.abdelrahman.blogplatorm.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +39,10 @@ public class UserController {
 	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody UserRequestDto dto){
 		return ResponseEntity.ok(userService.update(id,dto));
 	}
+	@PutMapping("/reset/{id}")
+	public ResponseEntity<?> resetPassword(@PathVariable Long id,@RequestParam String password){
+		return ResponseEntity.ok(userService.resetPassword(id, password));
+	}
 	@GetMapping("/{id}")
 	public ResponseEntity<?> findById(@PathVariable Long id){
 		return ResponseEntity.ok(userService.findById(id));
@@ -53,6 +57,7 @@ public class UserController {
 	}
 	
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Void> delete(@PathVariable Long id){
 		userService.delete(id);
 		return ResponseEntity.noContent().build();

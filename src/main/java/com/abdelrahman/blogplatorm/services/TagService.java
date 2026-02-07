@@ -70,4 +70,14 @@ public class TagService {
 	public boolean isExist(String name) {
 		return tagRepo.existsByName(name);
 	}
+	
+	public String delete(Long id) {
+		if(!tagRepo.existsById(id)) {
+			return "This tag is not found to delete";
+		}
+		else {
+			tagRepo.deleteById(id);
+			return "This tag deleted successfully";
+		}
+	}
 }
