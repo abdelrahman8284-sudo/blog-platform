@@ -45,7 +45,9 @@ public class UserService {
 		User user = mapper.toUserEntity(dto);
 		currentUser.setUsername(user.getUsername());
 		currentUser.setEmail(user.getEmail());
-		currentUser.setPassword(encoder.encode(user.getPassword()));
+		if(dto.getPassword() != null && !dto.getPassword().isBlank()) {
+		    currentUser.setPassword(encoder.encode(dto.getPassword()));
+		}
 		return mapper.toUserDto(userRepo.save(currentUser));
 	}
 	

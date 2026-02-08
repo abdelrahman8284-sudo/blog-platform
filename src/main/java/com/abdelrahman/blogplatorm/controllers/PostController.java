@@ -15,47 +15,58 @@ import com.abdelrahman.blogplatorm.dtos.requests.PostRequestDto;
 import com.abdelrahman.blogplatorm.dtos.update.PostUpdateDto;
 import com.abdelrahman.blogplatorm.services.PostService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
+@Tag(name = "Post Management")
 public class PostController {
 
 	private final PostService postService;
 	
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ADMIN','AUTHOR')")
+	@Operation(summary = "Add post(draft)")
 	public ResponseEntity<?> addPost(@RequestBody@Valid PostRequestDto dto){
 		return ResponseEntity.ok(postService.insert(dto));
 	}
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN','AUTHOR')")
+	@Operation(summary = "Update Post")
 	public ResponseEntity<?> update(@PathVariable Long id,@Valid@RequestBody PostUpdateDto post){
 		return ResponseEntity.ok(postService.update(id,post));
 	}
 	@PutMapping("/publish/{id}")
 	@PreAuthorize("hasAnyRole('AUTHOR','ADMIN')")
+	@Operation(summary = "Publish Post")
 	public ResponseEntity<?> publish(@PathVariable Long id){
 		return ResponseEntity.ok(postService.publishPost(id));
 	}
 	@GetMapping("/{id}")
+	@Operation(summary = "Find Post by Id")
 	public ResponseEntity<?> findById(@PathVariable Long id){
 		return ResponseEntity.ok(postService.findById(id));
 	}
 	@GetMapping("/search")
+	@Operation(summary = "Find Post by its Title")
 	public ResponseEntity<?> findByTitle(@RequestParam String title){
 		return ResponseEntity.ok(postService.findByTitle(title));
 	}
 	@GetMapping
+	@Operation(summary = "Find All Posts")
 	public ResponseEntity<?> findAll(){
 		return ResponseEntity.ok(postService.findAll());
 	} 
 	// تعديل ان لازم ال AUTHOR الي يشوف ده يشوف الخاص بيه بس
 	@GetMapping("/drafts")
-	@PreAuthorize("hasAnyRole('ADMIN','AUTHOR')")
-	public ResponseEntity<?> findDrafts(){
-		return ResponseEntity.ok(postService.findAll());
+	@PreAuthorize("hasAnyRole('AUTHOR','ADMIN')")
+	@Operation(summary = "Get draft posts for current authenticated user")
+	public ResponseEntity<?> findDrafts() {
+	    return ResponseEntity.ok(postService.findDraftsForCurrentUser());
 	}
+
 }

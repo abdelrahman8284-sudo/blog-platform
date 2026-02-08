@@ -15,31 +15,38 @@ import org.springframework.web.bind.annotation.RestController;
 import com.abdelrahman.blogplatorm.dtos.requests.CategoryRequestDto;
 import com.abdelrahman.blogplatorm.services.CategoryService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
+@Tag(name = "Category Management")
 public class CategoryController {
 	
 	private final CategoryService categoryService;
 	
 	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
+	@Operation(summary = "Create Category")
 	public ResponseEntity<?> createCategory(@RequestBody@Valid CategoryRequestDto category){
 		return ResponseEntity.ok(categoryService.insert(category));
 	}
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
+	@Operation(summary = "Update Category")
 	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody CategoryRequestDto category){
 		return ResponseEntity.ok(categoryService.update(id,category));
 	}
 	@GetMapping("/{id}")
+	@Operation(summary = "Find Category by Id")
 	public ResponseEntity<?> findById(@PathVariable Long id){
 		return ResponseEntity.ok(categoryService.findById(id));
 	}
 	
 	@GetMapping("/search")
+	@Operation(summary = "Find Category by name")
 	public ResponseEntity<?> findByName(@RequestParam String name){
 		return ResponseEntity.ok(categoryService.findByName(name));
 	}
@@ -48,11 +55,13 @@ public class CategoryController {
 //		return ResponseEntity.ok(categoryService.findAll());
 //	}
 	@GetMapping("/all")
+	@Operation(summary = "Find All Category and there post count")
 	public ResponseEntity<?> findAll(){
 		return ResponseEntity.ok(categoryService.listCategories());
 	}
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
+	@Operation(summary = "Delete Category by Id")
 	public ResponseEntity<Void> delete(@PathVariable Long id){
 		categoryService.delete(id);
 		return ResponseEntity.noContent().build();
