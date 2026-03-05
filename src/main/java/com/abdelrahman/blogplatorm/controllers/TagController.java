@@ -1,5 +1,6 @@
 package com.abdelrahman.blogplatorm.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdelrahman.blogplatorm.dtos.requests.TagRequestDto;
+import com.abdelrahman.blogplatorm.dtos.responses.TagResponseDto;
 import com.abdelrahman.blogplatorm.services.TagService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,8 +31,11 @@ public class TagController {
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ADMIN','AUTHOR')")
 	@Operation(summary = "Create Tag")
-	public ResponseEntity<?> createTag(@RequestBody TagRequestDto tag){
-		return ResponseEntity.ok(tagService.insert(tag));
+	public ResponseEntity<TagResponseDto> createTag(@RequestBody TagRequestDto tag){
+		return new ResponseEntity<>(
+				tagService.insert(tag)
+				,HttpStatus.CREATED
+		);
 	}
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")

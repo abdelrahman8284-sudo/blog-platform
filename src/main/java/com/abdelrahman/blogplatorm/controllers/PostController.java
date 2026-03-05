@@ -1,7 +1,9 @@
 package com.abdelrahman.blogplatorm.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdelrahman.blogplatorm.dtos.requests.PostRequestDto;
+import com.abdelrahman.blogplatorm.dtos.responses.PostResponseDto;
 import com.abdelrahman.blogplatorm.dtos.update.PostUpdateDto;
 import com.abdelrahman.blogplatorm.services.PostService;
 
@@ -31,8 +34,9 @@ public class PostController {
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ADMIN','AUTHOR')")
 	@Operation(summary = "Add post(draft)")
-	public ResponseEntity<?> addPost(@RequestBody@Valid PostRequestDto dto){
-		return ResponseEntity.ok(postService.insert(dto));
+	public ResponseEntity<PostResponseDto> addPost(@RequestBody@Valid PostRequestDto dto){
+		
+		return new ResponseEntity<>(postService.insert(dto),HttpStatus.CREATED);
 	}
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN','AUTHOR')")
@@ -58,8 +62,13 @@ public class PostController {
 	}
 	@GetMapping
 	@Operation(summary = "Find All Posts")
-	public ResponseEntity<?> findAll(){
-		return ResponseEntity.ok(postService.findAll());
+	public ResponseEntity<?> findAll(
+			@RequestParam(defaultValue = "0") int pageNumber,
+			@RequestParam(defaultValue = "5") int pageSize,
+			@RequestParam(defaultValue = "createdAt") String sortBy,
+			@RequestParam(defaultValue = "ASC") String sortType
+			){
+		return ResponseEntity.ok(postService.findAll(pageNumber, pageSize, sortBy, sortType));
 	} 
 	// تعديل ان لازم ال AUTHOR الي يشوف ده يشوف الخاص بيه بس
 	@GetMapping("/drafts")
@@ -69,4 +78,11 @@ public class PostController {
 	    return ResponseEntity.ok(postService.findDraftsForCurrentUser());
 	}
 
+	@DeleteMapping("/{id}")
+	@PreAuthorize("hasAnyRole('AUTHOR','ADMIN')")
+	@Operation(summary = "Delete Post by id")
+	public ResponseEntity<Void> delete(@PathVariable Long id){
+		postService.delete(id);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+	}
 }

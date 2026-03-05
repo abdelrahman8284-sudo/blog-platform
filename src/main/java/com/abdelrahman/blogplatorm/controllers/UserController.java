@@ -5,7 +5,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdelrahman.blogplatorm.dtos.requests.UserRequestDto;
-import com.abdelrahman.blogplatorm.security.dtos.UserLoginDto;
 import com.abdelrahman.blogplatorm.services.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,21 +26,6 @@ public class UserController {
 
 	private final UserService userService;
 
-	@PostMapping("/register")
-	@Operation(summary = "Register new user")
-	public ResponseEntity<?> register(@RequestBody UserRequestDto dto) {
-		return ResponseEntity.ok(userService.register(dto));
-	}
-
-	@PostMapping("/login")
-	@Operation(
-		    summary = "User login",
-		    description = "Authenticate user using email and password and return JWT token"
-		)
-	public ResponseEntity<?> login(@RequestBody UserLoginDto loginDto) {
-		return ResponseEntity.ok(userService.login(loginDto));
-	}
-
 	@PutMapping("/{id}")
 	@Operation(summary = "Update User")
 	@PreAuthorize("hasRole('ADMIN') or #id == principal.id")
@@ -50,12 +33,6 @@ public class UserController {
 		return ResponseEntity.ok(userService.update(id, dto));
 	}
 
-	@PutMapping("/reset/{id}")
-	@Operation(summary = "Reset Password")
-	@PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-	public ResponseEntity<?> resetPassword(@PathVariable Long id, @RequestParam String password) {
-		return ResponseEntity.ok(userService.resetPassword(id, password));
-	}
 
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")

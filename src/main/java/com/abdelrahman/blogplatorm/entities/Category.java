@@ -49,6 +49,6 @@ public class Category {
 	}
 
 	@OneToMany(mappedBy = "category")
-	@JsonBackReference
+	//@JsonBackReference
 	private List<Post> posts=new ArrayList<>();
 }

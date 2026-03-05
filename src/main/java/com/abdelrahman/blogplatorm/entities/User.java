@@ -57,7 +57,7 @@ public class User {
 	private LocalDateTime createdAt;
 	
 	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-	@JsonBackReference
+	//@JsonBackReference
 	private List<Post> posts = new ArrayList<>();
 	
 }

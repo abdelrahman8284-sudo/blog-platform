@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,12 +31,12 @@ public class Tag {
 	private String name;
 	
 	@ManyToMany(mappedBy = "tags")
-	@JsonBackReference
+	//@JsonBackReference
 	private List<Post> posts = new ArrayList<>();
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, posts);
+		return Objects.hash(id, name);
 	}
 
 	@Override

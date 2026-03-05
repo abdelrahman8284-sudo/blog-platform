@@ -3,6 +3,8 @@ package com.abdelrahman.blogplatorm.repositories;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,11 +12,11 @@ import com.abdelrahman.blogplatorm.entities.Post;
 import com.abdelrahman.blogplatorm.enums.Status;
 @Repository
 public interface PostRepo extends JpaRepository<Post, Long> {
-	List<Post> findByTitleAndStatus(String title,Status status);
+	List<Post> findByTitleContainingIgnoreCaseAndStatus(String title, Status status);	
 	
 	Optional<Post> findByIdAndStatus(Long id,Status status);
 	
-	List<Post> findAllByStatus(Status status);
+	Page<Post> findAllByStatus(Status status, Pageable pageable);	
 	
 	List<Post>findByUserIdAndStatus(Long userId, Status status);
 	

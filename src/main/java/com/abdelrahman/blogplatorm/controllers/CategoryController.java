@@ -1,5 +1,6 @@
 package com.abdelrahman.blogplatorm.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdelrahman.blogplatorm.dtos.requests.CategoryRequestDto;
+import com.abdelrahman.blogplatorm.dtos.responses.CategoryResponseDto;
 import com.abdelrahman.blogplatorm.services.CategoryService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,13 +32,16 @@ public class CategoryController {
 	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Create Category")
-	public ResponseEntity<?> createCategory(@RequestBody@Valid CategoryRequestDto category){
-		return ResponseEntity.ok(categoryService.insert(category));
+	public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody@Valid CategoryRequestDto category){
+		return new ResponseEntity<>(
+				categoryService.insert(category)
+				,HttpStatus.CREATED
+		);
 	}
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Update Category")
-	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody CategoryRequestDto category){
+	public ResponseEntity<?> update(@PathVariable Long id,@RequestBody@Valid CategoryRequestDto category){
 		return ResponseEntity.ok(categoryService.update(id,category));
 	}
 	@GetMapping("/{id}")
@@ -47,7 +52,7 @@ public class CategoryController {
 	
 	@GetMapping("/search")
 	@Operation(summary = "Find Category by name")
-	public ResponseEntity<?> findByName(@RequestParam String name){
+	public ResponseEntity<?> findByName(@RequestParam@Valid String name){
 		return ResponseEntity.ok(categoryService.findByName(name));
 	}
 //	@GetMapping

@@ -14,7 +14,7 @@ import lombok.Setter;
 //@Schema(title="User")
 public class UserRequestDto {
 
-	
+	@NotBlank
 	private String username;
 	@NotBlank
 	@Email

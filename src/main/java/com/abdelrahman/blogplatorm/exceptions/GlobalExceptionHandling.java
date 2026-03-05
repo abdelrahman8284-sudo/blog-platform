@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -126,5 +127,15 @@ public class GlobalExceptionHandling extends ResponseEntityExceptionHandler {
 	            HttpStatus.CONFLICT.value()
 	    );
 	    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+	}
+	
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException ex ){
+		ErrorResponseDto errorResponse = ErrorResponseDto.builder()
+				.message("Invalid Username or password")
+				.status(HttpStatus.UNAUTHORIZED.value())
+				.details(Arrays.asList(ex.getMessage()))
+				.build();
+		return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
 	}
 }

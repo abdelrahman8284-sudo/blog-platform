@@ -69,17 +69,17 @@ public class Post {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
-	@JsonManagedReference
+	//@JsonManagedReference
 	private User user;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="category_id")
-	@JsonManagedReference
+	//@JsonManagedReference
 	private Category category;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(inverseJoinColumns = @JoinColumn(name="tag_id"),joinColumns = @JoinColumn(name="post_id"),name="posts_tags")	
-	@JsonManagedReference
+	//@JsonManagedReference
 	private Set<Tag> tags = new HashSet<>();
 	
 //	@PostPersist
