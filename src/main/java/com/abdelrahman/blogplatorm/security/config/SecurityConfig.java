@@ -32,8 +32,8 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf->csrf.disable());
 		http.authorizeHttpRequests(request ->request
-				.requestMatchers("/api/v1/users/register"
-						,"/api/v1/users/login"
+				.requestMatchers("/api/v1/auth/register"
+						,"/api/v1/auth/login"
 						, "/swagger-ui/**",
 		                "/v3/api-docs/**",
 		                "/swagger-ui.html")

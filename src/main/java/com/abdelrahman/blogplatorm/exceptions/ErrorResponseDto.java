@@ -6,9 +6,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
-@Getter@Setter@Builder@AllArgsConstructor
+@Getter@Builder@AllArgsConstructor
 public class ErrorResponseDto {
 
 	private final boolean success =false;
@@ -19,7 +18,8 @@ public class ErrorResponseDto {
 	
 	private List<String> details;
 	
-	private LocalDateTime timestamp;
+	@Builder.Default
+	private LocalDateTime timestamp=LocalDateTime.now();
 	
 	private String path;
 	

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -137,5 +138,14 @@ public class GlobalExceptionHandling extends ResponseEntityExceptionHandler {
 				.details(Arrays.asList(ex.getMessage()))
 				.build();
 		return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+	}
+	
+	@ExceptionHandler(AuthorizationDeniedException.class)
+	public ResponseEntity<?> handleAuthorizationDeniedException(AuthorizationDeniedException ex){
+		ErrorResponseDto error = ErrorResponseDto.builder()
+				.message("This user is not allowed")
+				.status(HttpStatus.UNAUTHORIZED.value())
+				.build();
+		return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
 	}
 }
