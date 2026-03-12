@@ -51,8 +51,19 @@ public class AuthService {
 			var user = (MyUserPrinciple) authentication.getPrincipal();
 			String authority = user.getAuthorities().iterator().next().getAuthority();
 			String token = jwtService.generateToken(userDto.getEmail(), authority);
+			UserResponseDto userDtoResponse = UserResponseDto.builder()
+		               .id(user.getId())
+		               .username(user.getUsernameValue())
+		               .email(user.getUsername())
+		               .role(Role.valueOf(authority))
+		               .createdAt(user.getCreatedAt())
+		               .build();
 			
-			return new AuthResponse(token);
+			return AuthResponse.builder()
+	                .token(token)
+	                .user(userDtoResponse)
+	                .type("Bearer")
+	                .build();
 		}
 		throw new BadCredentialsException("Invalid credentials");
 	}

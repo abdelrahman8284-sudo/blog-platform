@@ -1,5 +1,6 @@
 package com.abdelrahman.blogplatorm.security.dtos;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,6 +33,14 @@ public class MyUserPrinciple implements UserDetails{
 	@Override
 	public String getUsername() {
 		return user.getEmail();
+	}
+	
+	public String getUsernameValue() {
+		return user.getUsername();
+	}
+	
+	public LocalDateTime getCreatedAt() {
+		return user.getCreatedAt();
 	}
 	
 	public Long getId() {
