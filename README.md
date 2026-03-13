@@ -356,4 +356,4 @@ You can explore and test all API endpoints from there.
 
 # 🗺 Database Schema (ERD)
 
-![ERD](screenshots/schema.png)
+![ERD](screenshots/Blogplatform_Schema.png)
