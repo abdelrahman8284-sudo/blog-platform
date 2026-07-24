@@ -54,10 +54,11 @@ public class Post {
 	private String content;
 	
 	private Integer readingTime;
-	@ColumnDefault("DRAFT")
+	//@ColumnDefault("'DRAFT'")
+	@Builder.Default
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private Status status;
+	private Status status = Status.DRAFT;
 	
 	@CreatedDate
 	private LocalDateTime createdAt;
@@ -94,7 +95,8 @@ public class Post {
 	    if (this.content != null && !this.content.isEmpty()) {
 	        // بنقسم على 200.0 عشان نضمن إنها قسمة decimal والكسر م يضيعش
 	        double words = this.content.trim().split("\\s+").length;
-	        this.readingTime = (int) Math.ceil(words / 200.0);
+	        this.readingTime = (int) Math.ceil(words / 200.0);// عدد الكلمات لكل  دقيقة
+	    // ceil عشان اجيب اقرب عدد صحيح اكبر من الكسر
 	    } else {
 	        this.readingTime = 0;
 	    }

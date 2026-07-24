@@ -48,7 +48,7 @@ public class Tag {
 		if (getClass() != obj.getClass())
 			return false;
 		Tag other = (Tag) obj;
-		return Objects.equals(id, other.id) && Objects.equals(name, other.name) && Objects.equals(posts, other.posts);
+		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
 	}
 	
 	

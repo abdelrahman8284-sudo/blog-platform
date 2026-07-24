@@ -49,7 +49,7 @@ public class CategoryService {
 	}
 
 	public CategoryResponseDto findById(Long id) {	
-		return mapper.toDto(catRepo.findById(id).orElseThrow(()->new RuntimeException("Category Not Found")));
+		return mapper.toDto(catRepo.findById(id).orElseThrow(()->new RecordNotFoundException("Category Not Found")));
 	}
 	
 	public Category getById(Long id) {

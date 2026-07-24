@@ -30,4 +30,39 @@ public interface CategoryMapper {
 		return posts.stream()
 				.filter(post ->Status.PUBLISHED.equals(post.getStatus())).count();
 	}
+//	@Named("calculatePostCount")
+//	default long calcPostsCount(List<Post>posts) {
+//		if(posts == null) {
+//			return 0;
+//		}
+//		return posts.stream().filter(post->post.getStatus().equals(Status.PUBLISHED)).count();
+//	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
